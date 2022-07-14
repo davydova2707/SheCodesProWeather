@@ -1,0 +1,21 @@
+body {
+  text-align: center;
+  font-family: Comic Sans MS, Comic Sans, Comic Neue, cursive;
+  padding: 50px 0px;
+  background-color: LightSlateGray;
+  color: Plum;
+}
+.card {
+  max-width: 600px;
+  margin: 0px auto;
+}
+
+#forecast {
+  background-color: Plum;
+  color: white;
+}
+
+.footer {
+  font-size: 10px;
+  text-align: center;
+}
