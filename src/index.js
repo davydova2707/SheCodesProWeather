@@ -54,8 +54,17 @@ function changeCurrentLocation() {
     });
 }
 
+function changeOnEnterInputEnterAcity(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    document.getElementById("button-addon2").click();
+  }
+}
+
 let buttonAddon2 = document.querySelector("#button-addon2");
 buttonAddon2.addEventListener("click", changeCurrentLocation);
+let inputEnterAcity = document.querySelector("#enterAcity");
+inputEnterAcity.addEventListener("keypress", changeOnEnterInputEnterAcity);
 
 // Current Location
 
