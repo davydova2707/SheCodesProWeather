@@ -31,13 +31,14 @@ function formatDate() {
   return dateString;
 }
 
-let currentDay = document.querySelector("#currentDay");
-currentDay.innerHTML = formatDate();
-
 // Location
 
 function showCurrentLocationTemp(response) {
   changeCurrentTemperature(Math.round(response.data.main.temp));
+  changeCurrentDescription(response.data.weather[0].description);
+  changeCurrentIcon(response.data.weather[0].icon);
+  changeCurrentWind(response.data.wind.speed);
+  changeCurrentHumidity(response.data.main.humidity);
   let currentLocation = document.querySelector("#currentLocation");
   currentLocation.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${response.data.name}`;
 }
@@ -61,11 +62,6 @@ function changeOnEnterInputEnterAcity(event) {
   }
 }
 
-let buttonAddon2 = document.querySelector("#button-addon2");
-buttonAddon2.addEventListener("click", changeCurrentLocation);
-let inputEnterAcity = document.querySelector("#enterAcity");
-inputEnterAcity.addEventListener("keypress", changeOnEnterInputEnterAcity);
-
 // Current Location
 
 function showCurrentGeo(response) {
@@ -75,9 +71,7 @@ function showCurrentGeo(response) {
     city = cityArr[1];
   }
   document.getElementById("enterAcity").value = city;
-  let currentLocation = document.querySelector("#currentLocation");
-  currentLocation.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${city}`;
-  changeCurrentTemperature(Math.round(response.data.current.temp));
+  changeCurrentLocation();
 }
 
 function getCurrentGeo(position) {
@@ -92,8 +86,49 @@ function changeCurrentLocationToMyGeo() {
   navigator.geolocation.getCurrentPosition(getCurrentGeo);
 }
 
-let buttonGeo = document.querySelector("#buttongeo");
-buttonGeo.addEventListener("click", changeCurrentLocationToMyGeo);
+// Description
+
+function changeCurrentDescription(tmp) {
+  let currentDescriptionDigit = document.querySelector(
+    "#description"
+  );
+  description = tmp;
+  currentDescriptionDigit.innerHTML = tmp;
+}
+
+// Icon
+
+function changeCurrentIcon(tmp) {
+  let currentIconImage = document.querySelector(
+    "#icon"
+  );
+  icon = tmp;
+  currentIconImage.setAttribute(
+    "src",
+    `http://openweathermap.org/img/wn/${tmp}@2x.png`
+  );
+  currentIconImage.setAttribute("alt", description);
+}
+
+// Wind
+
+function changeCurrentWind(tmp) {
+  let currentWindDigit = document.querySelector(
+    "#wind"
+  );
+  wind = tmp;
+  currentWindDigit.innerHTML = tmp;
+}
+
+// Humidity
+
+function changeCurrentHumidity(tmp) {
+  let currentHumidityDigit = document.querySelector(
+    "#humidity"
+  );
+  humidity = tmp;
+  currentHumidityDigit.innerHTML = tmp;
+}
 
 // Temperature
 
@@ -127,14 +162,51 @@ function changeCurrentTemperatureToImperial() {
   }
 }
 
+// Main
+
+let currentDay = document.querySelector("#currentDay");
+currentDay.innerHTML = formatDate();
+
+
+document.querySelector("#currentLocation").innerHTML = `<i class="fas fa-map-marker-alt"></i> Kyiv`;
+
+let buttonAddon2 = document.querySelector("#button-addon2");
+buttonAddon2.addEventListener("click", changeCurrentLocation);
+let inputEnterAcity = document.querySelector("#enterAcity");
+inputEnterAcity.addEventListener("keypress", changeOnEnterInputEnterAcity);
+
+
+let buttonGeo = document.querySelector("#buttongeo");
+buttonGeo.addEventListener("click", changeCurrentLocationToMyGeo);
+
+
 let temp = 26;
-document.querySelector("#currentTemperatureDigit").innerHTML = 26;
+document.querySelector("#currentTemperatureDigit").innerHTML = temp;
 let tempSysMetric = true;
+
+
+let description = "scattered clouds";
+document.querySelector("#description").innerHTML = description;
+
+
+let icon = "03d";
+document.querySelector("#icon").setAttribute("src", `http://openweathermap.org/img/wn/${icon}@2x.png`);
+document.querySelector("#icon").setAttribute("alt", description);
+
+
+let wind = 2;
+document.querySelector("#wind").innerHTML = wind;
+
+
+let humidity = 40;
+document.querySelector("#humidity").innerHTML = humidity;
+
 
 let metric = document.querySelector("#metric");
 metric.addEventListener("click", changeCurrentTemperatureToMetric);
 let imperial = document.querySelector("#imperial");
 imperial.addEventListener("click", changeCurrentTemperatureToImperial);
+
 
 let event = new Event("click");
 buttongeo.dispatchEvent(event);
