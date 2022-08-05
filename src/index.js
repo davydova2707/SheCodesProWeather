@@ -31,6 +31,50 @@ function formatDate() {
   return dateString;
 }
 
+// Forecast
+
+function formatForecastDay(time) {
+  let date = new Date(time * 1000);
+  let day = date.getDay();
+  let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  return days[day];
+}
+
+function displayForecast(response) {
+  let dailyForecast = response.data.daily;
+  forecast = dailyForecast;
+  let currentForecast = document.querySelector("#forecast");
+  
+  let forecastHTML = "";
+  dailyForecast.forEach(function (forecastDay, index) {
+    if (index < 6) {
+      forecastHTML =
+        forecastHTML + 
+        `<div class="col-2">
+          <strong> ${formatForecastDay(forecastDay.dt)} </strong>
+          <br />
+          <img src="http://openweathermap.org/img/wn/${forecastDay.weather[0].icon}@2x.png" alt=""
+          width="42" />
+          <br />
+          <div class="weather-forecast-temperature">
+            <strong> ${Math.round(forecastDay.temp.max)}° </strong>
+            / ${Math.round(forecastDay.temp.min)}°
+          </div>
+        </div>`;
+    }
+  });
+
+  currentForecast.innerHTML = forecastHTML;
+
+}
+
+function getForecast(lat, lon) {
+  let apiKey = "cb83cd89bebae00ada77eb1feb5129d6";
+  let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+  axios.get(url).then(displayForecast);
+}
+
 // Location
 
 function showCurrentLocationTemp(response) {
@@ -41,6 +85,7 @@ function showCurrentLocationTemp(response) {
   changeCurrentHumidity(response.data.main.humidity);
   let currentLocation = document.querySelector("#currentLocation");
   currentLocation.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${response.data.name}`;
+  getForecast(response.data.coord.lat, response.data.coord.lon);
 }
 
 function changeCurrentLocation() {
@@ -132,6 +177,58 @@ function changeCurrentHumidity(tmp) {
 
 // Temperature
 
+function changeForecastToMetric() {
+  let currentForecast = document.querySelector("#forecast");
+  
+  let forecastHTML = "";
+  forecast.forEach(function (forecastDay, index) {
+    if (index < 6) {
+      forecastHTML =
+        forecastHTML + 
+        `<div class="col-2">
+          <strong> ${formatForecastDay(forecastDay.dt)} </strong>
+          <br />
+          <img src="http://openweathermap.org/img/wn/${forecastDay.weather[0].icon}@2x.png" alt=""
+          width="42" />
+          <br />
+          <div class="weather-forecast-temperature">
+            <strong> ${Math.round(forecastDay.temp.max)}° </strong>
+            / ${Math.round(forecastDay.temp.min)}°
+          </div>
+        </div>`;
+    }
+  });
+
+  currentForecast.innerHTML = forecastHTML;
+
+}
+
+function changeForecastToImperial() {
+  let currentForecast = document.querySelector("#forecast");
+  
+  let forecastHTML = "";
+  forecast.forEach(function (forecastDay, index) {
+    if (index < 6) {
+      forecastHTML =
+        forecastHTML + 
+        `<div class="col-2">
+          <strong> ${formatForecastDay(forecastDay.dt)} </strong>
+          <br />
+          <img src="http://openweathermap.org/img/wn/${forecastDay.weather[0].icon}@2x.png" alt=""
+          width="42" />
+          <br />
+          <div class="weather-forecast-temperature">
+            <strong> ${Math.round((forecastDay.temp.max * 9) / 5 + 32)}° </strong>
+            / ${Math.round((forecastDay.temp.min * 9) / 5 + 32)}°
+          </div>
+        </div>`;
+    }
+  });
+
+  currentForecast.innerHTML = forecastHTML;
+
+}
+
 function changeCurrentTemperature(tmp) {
   let currentTemperatureDigit = document.querySelector(
     "#currentTemperatureDigit"
@@ -149,6 +246,7 @@ function changeCurrentTemperatureToMetric() {
     currentTemperatureDigit.innerHTML = temp;
     tempSysMetric = true;
   }
+  changeForecastToMetric();
 }
 
 function changeCurrentTemperatureToImperial() {
@@ -157,8 +255,9 @@ function changeCurrentTemperatureToImperial() {
       "#currentTemperatureDigit"
     );
     currentTemperatureDigit.innerHTML =
-      (currentTemperatureDigit.innerHTML * 9) / 5 + 32;
+    Math.round((currentTemperatureDigit.innerHTML * 9) / 5 + 32);
     tempSysMetric = false;
+    changeForecastToImperial();
   }
 }
 
@@ -181,6 +280,7 @@ buttonGeo.addEventListener("click", changeCurrentLocationToMyGeo);
 
 
 let temp = 26;
+let forecast;
 document.querySelector("#currentTemperatureDigit").innerHTML = temp;
 let tempSysMetric = true;
 
